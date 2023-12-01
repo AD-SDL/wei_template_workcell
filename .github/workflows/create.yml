@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   rename-project:
-    if: ${{ !contains (github.repository, 'gladier-client-template') }}
+    if: ${{ !contains (github.repository, 'wei_template_workcell') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
