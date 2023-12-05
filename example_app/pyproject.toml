@@ -1,0 +1,16 @@
+[project]
+name = "example_app"
+version = "1.0.0"
+description = "A simple example WEI application that waits for a set amount of time, then takes a picture with a webcam."
+authors = [{name = "Ryan D. Lewis", email="ryan.lewis@anl.gov"}]
+dependencies = [
+    # "fastapi>=0.103",
+    # "uvicorn>=0.14.0",
+    "ad_sdl.wei",
+]
+requires-python = ">=3.8.1"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.urls]
+homepage = "https://github.com/AD-SDL/wei_template_workcell"
