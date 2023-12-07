@@ -8,7 +8,7 @@ services:
       - 8000:8000
     volumes:
       - ./workcell_defs:/workcell_defs
-      - ~/.wei:/root/.wei
+      - ./.wei:/root/.wei
     command: pdm run server --workcell /workcell_defs/example_workcell.yaml --redis_host redis --port 8000
     depends_on:
       - redis
@@ -17,7 +17,7 @@ services:
     container_name: wei_engine
     volumes:
       - ./workcell_defs:/workcell_defs
-      - ~/.wei:/root/.wei
+      - ./.wei:/root/.wei
     command: pdm run engine --workcell /workcell_defs/example_workcell.yaml --redis_host redis --server wei_server
     depends_on:
       - redis
@@ -49,6 +49,7 @@ services:
     command: python /webcam_module/src/webcam_rest_node.py
   example_app:
     image: example_app
+    container_name: example_app
     build:
       context: .
       dockerfile: ./Dockerfile
