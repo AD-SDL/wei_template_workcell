@@ -2,6 +2,4 @@
 
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-cd $SCRIPTPATH/..
-
-docker compose restart "$@"
+$SCRIPTPATH/view_logs.sh -f "$@"

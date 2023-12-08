@@ -1,4 +1,1 @@
 # wei-template-workcell
-
-
-   

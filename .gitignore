@@ -161,3 +161,6 @@ cython_debug/
 
 # Data Directory
 .wei
+
+# Ruff
+.ruff_cache

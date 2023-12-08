@@ -2,23 +2,23 @@ version: "3.0"
 name: example_workcell
 services:
   wei_server:
-    image: wei
+    image: ghcr.io/ad-sdl/wei
     container_name: wei_server
     ports:
       - 8000:8000
     volumes:
       - ./workcell_defs:/workcell_defs
       - ./.wei:/root/.wei
-    command: pdm run server --workcell /workcell_defs/example_workcell.yaml --redis_host redis --port 8000
+    command: python3 -m wei.server --workcell /workcell_defs/example_workcell.yaml --redis_host redis --port 8000
     depends_on:
       - redis
   wei_engine:
-    image: wei
+    image: ghcr.io/ad-sdl/wei
     container_name: wei_engine
     volumes:
       - ./workcell_defs:/workcell_defs
       - ./.wei:/root/.wei
-    command: pdm run engine --workcell /workcell_defs/example_workcell.yaml --redis_host redis --server wei_server
+    command: python3 -m wei.engine --workcell /workcell_defs/example_workcell.yaml --redis_host redis --server wei_server
     depends_on:
       - redis
       - wei_server
@@ -30,23 +30,23 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - ~/.wei/redis_data:/data
+      - ./.wei/redis_data:/data
     command: redis-server --save 60 1 --loglevel warning
   sleep_node:
-    image: sleep_module
+    image: ghcr.io/ad-sdl/sleep_module:1.0.0
     container_name: sleep_node
     command: python /sleep_module/src/sleep_rest_node.py
     ports:
       - 2000:2000
   webcam_node:
-    image: webcam_module
+    image: ghcr.io/ad-sdl/webcam_module:1.0.0
     container_name: webcam_node
     privileged: true # needed for hardware access
     volumes:
       - /dev/video0:/dev/video0
     ports:
-      - 2001:2000
-    command: python /webcam_module/src/webcam_rest_node.py
+      - 2001:2001
+    command: python /webcam_module/src/webcam_rest_node.py --port 2001
   example_app:
     image: example_app
     container_name: example_app
@@ -61,3 +61,27 @@ services:
       - wei_server
       - sleep_node
       - webcam_node
+  # wei_jupyter:
+  #   image: ghcr.io/ad-sdl/wei_jupyter
+  #   container_name: wei_jupyter
+  #   user: root
+  #   working_dir: "/home/${USER}"
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile-jupyter
+  #     args:
+  #       USER_ID: ${USER_ID}
+  #       GROUP_ID: ${GROUP_ID}
+  #       USER: ${USER}
+  #   ports:
+  #     - 8888:8888
+  #   volumes:
+  #     - ./examples:/home/${USER}/examples
+  #     - ./wei:/home/${USER}/wei/wei
+  #   environment:
+  #     JUPYTER_ENABLE_LAB: "yes"
+  #     JUPYTER_TOKEN: "wei"
+  #     NB_USER: "${USER}"
+  #     CHOWN_HOME: "yes"
+  #     NB_UID: "${USER_ID}"
+  #     NB_GID: "${GROUP_ID}"
