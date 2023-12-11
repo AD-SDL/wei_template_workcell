@@ -9,7 +9,9 @@ services:
     volumes:
       - ./workcell_defs:/workcell_defs
       - ./.wei:/root/.wei
-    command: python3 -m wei.server --workcell /workcell_defs/example_workcell.yaml --redis_host redis --port 8000
+      - ~/.globus_compute:/root/.globus_compute
+      - ~/.diaspora:/root/.diaspora
+    command: python3 -m wei.server --workcell /workcell_defs/example_workcell.yaml --redis_host redis --port 8000 --use_kafka True
     depends_on:
       - redis
   wei_engine:
@@ -61,6 +63,8 @@ services:
       - wei_server
       - sleep_node
       - webcam_node
+
+
   # wei_jupyter:
   #   image: ghcr.io/ad-sdl/wei_jupyter
   #   container_name: wei_jupyter
