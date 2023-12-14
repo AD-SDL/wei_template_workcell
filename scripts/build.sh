@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+source "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"/script_helper.sh
 
-cd $SCRIPTPATH/..
+cd $project_path
 
-docker build -t example_app -f Dockerfile .
+docker build -t ${project_name}:latest .

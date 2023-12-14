@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+source "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"/script_helper.sh
+cd $project_path
 
-cd $SCRIPTPATH/..
-
-docker compose down "$@"
+docker compose down
