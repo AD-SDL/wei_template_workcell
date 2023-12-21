@@ -2,7 +2,7 @@ FROM ghcr.io/ad-sdl/wei
 
 # Set up user permissions for mounting volumes with the same user as the host
 # This prevents a lot of permission issues
-# Note: if you're not using the build script, you'll need to pass these args in
+# Note: if you're not using the makefile/compose.yaml, you'll need to pass these args in yourself
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG CONTAINER_USER=wei
@@ -26,5 +26,3 @@ WORKDIR /home/${CONTAINER_USER}
 COPY --chown=${USER_ID}:${GROUP_ID} ./example_app example_app
 
 RUN pip install -e example_app
-
-CMD ["python3", "example_app/example_app.py"]

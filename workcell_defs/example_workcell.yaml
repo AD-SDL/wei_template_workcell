@@ -1,13 +1,18 @@
 name: Example_Workcell
 
-#Info about data processing and location of the workcell
+# Configuration info and parameters for the workcell and WEI
+# All of these values can be overridden via CLI arguments
 config:
-  funcx_local_ep: ""
-  globus_local_ep: ""
-  globus_search_index: ""
-  globus_portal_ep: ""
-  globus_group: ""
   workcell_origin_coordinates: [0, 0, 0, 0, 0, 0]
+  # This is the name of the container running the WEI server,
+  # or the hostname/IP of the machine running the WEI server if not using Docker (or addressing from another machine)
+  server_host: wei_server
+  server_port: 8000
+  redis_host: redis
+  redis_port: 6379
+  reset_locations: false
+  update_interval: 1.0
+  log_level: 20 # INFO level, see https://docs.python.org/3/library/logging.html#levels for a list of levels
 
 #List of all components accessible in this workcell
 modules:

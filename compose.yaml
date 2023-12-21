@@ -5,23 +5,18 @@ services:
   # Your app #
   ############
   example_app:
-    # image: example_app
-    image: ${project_name}
-    container_name: example_app
+    image: ${IMAGE_NAME}
+    container_name: ${APP_NAME}
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ${DOCKERFILE}
       args:
           USER_ID: ${USER_ID}
           GROUP_ID: ${GROUP_ID}
     volumes:
-      - ./example_app:/home/wei/example_app
-    command: python example_app/example_app.py
-    depends_on:
-      - wei_engine
-      - wei_server
-      - sleep_node
-      - webcam_node
+      - ./example_app:/home/wei/example_app # Mount your app code, so you can edit it without rebuilding the image
+      - diaspora_config:/home/wei/.diaspora
+    tty: true
 
   ###########
   # Modules #
@@ -46,24 +41,24 @@ services:
   # WEI Core Services #
   #####################
   wei_server:
-    image: example_app
+    image: ${APP_NAME} # This should be based on ghcr.io/ad-sdl/wei
     container_name: wei_server
     ports:
       - 8000:8000
     volumes:
-      - ./workcell_defs:/workcell_defs
-      - ./.wei:/root/.wei
-      # - ~/.diaspora:/root/.diaspora
-    command: python3 -m wei.server --workcell /workcell_defs/example_workcell.yaml --redis_host redis --port 8000 # --use_kafka True
+      - ${WORKCELLS_DIR}:/workcell_defs
+      - ${WEI_DATA_DIR}:/home/wei/.wei
+      - diaspora_config:/home/wei/.diaspora
+    command: python3 -m wei.server --workcell /workcell_defs/${WORKCELL_FILENAME} --use_diaspora ${USE_DIASPORA}
     depends_on:
       - redis
   wei_engine:
-    image: example_app
+    image: ${APP_NAME} # This should be based on ghcr.io/ad-sdl/wei
     container_name: wei_engine
     volumes:
-      - ./workcell_defs:/workcell_defs
-      - ./.wei:/root/.wei
-    command: python3 -m wei.engine --workcell /workcell_defs/example_workcell.yaml --redis_host redis --server wei_server
+      - ${WORKCELLS_DIR}:/workcell_defs
+      - ${WEI_DATA_DIR}:/home/wei/.wei
+    command: python3 -m wei.engine --workcell /workcell_defs/${WORKCELL_FILENAME} --use_diaspora ${USE_DIASPORA}
     depends_on:
       - redis
       - wei_server
@@ -75,30 +70,12 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - ./.wei/redis_data:/data
+      - ${REDIS_DIR}:/data
     command: redis-server --save 60 1 --loglevel warning
 
-  # wei_jupyter:
-  #   image: ghcr.io/ad-sdl/wei_jupyter
-  #   container_name: wei_jupyter
-  #   user: root
-  #   working_dir: "/home/${USER}"
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile-jupyter
-  #     args:
-  #       USER_ID: ${USER_ID}
-  #       GROUP_ID: ${GROUP_ID}
-  #       USER: ${USER}
-  #   ports:
-  #     - 8888:8888
-  #   volumes:
-  #     - ./examples:/home/${USER}/examples
-  #     - ./wei:/home/${USER}/wei/wei
-  #   environment:
-  #     JUPYTER_ENABLE_LAB: "yes"
-  #     JUPYTER_TOKEN: "wei"
-  #     NB_USER: "${USER}"
-  #     CHOWN_HOME: "yes"
-  #     NB_UID: "${USER_ID}"
-  #     NB_GID: "${GROUP_ID}"
+################
+# Data Storage #
+################
+volumes:
+  diaspora_config:
+    driver: local
