@@ -1,21 +1,18 @@
-version: "3.0"
 name: example_workcell
 services:
   ############
   # Your app #
   ############
   example_app:
-    image: ${IMAGE_NAME}
     container_name: ${APP_NAME}
     build:
       context: .
       dockerfile: ${DOCKERFILE}
-      args:
-          USER_ID: ${USER_ID}
-          GROUP_ID: ${GROUP_ID}
     volumes:
-      - ./example_app:/home/wei/example_app # Mount your app code, so you can edit it without rebuilding the image
-      - diaspora_config:/home/wei/.diaspora
+      - ./example_app:/home/app/example_app # Mount your app code, so you can edit it without rebuilding the image
+      - diaspora_config:/home/app/.diaspora
+    env_file:
+      - .env
     tty: true
 
   ###########
@@ -24,9 +21,10 @@ services:
   sleep_node:
     image: ghcr.io/ad-sdl/sleep_module
     container_name: sleep_node
-    command: python /sleep_module/src/sleep_rest_node.py
     ports:
       - 2000:2000
+    env_file:
+      - .env
   webcam_node:
     image: ghcr.io/ad-sdl/webcam_module
     container_name: webcam_node
@@ -36,37 +34,43 @@ services:
     ports:
       - 2001:2001
     command: python /webcam_module/src/webcam_rest_node.py --port 2001
+    env_file:
+      - .env
 
   #####################
   # WEI Core Services #
   #####################
   wei_server:
-    image: ${APP_NAME} # This should be based on ghcr.io/ad-sdl/wei
+    image: ghcr.io/ad-sdl/wei
     container_name: wei_server
     ports:
       - 8000:8000
     volumes:
       - ${WORKCELLS_DIR}:/workcell_defs
-      - ${WEI_DATA_DIR}:/home/wei/.wei
-      - diaspora_config:/home/wei/.diaspora
+      - ${WEI_DATA_DIR}:/home/app/.wei
+      - diaspora_config:/home/app/.diaspora
     command: python3 -m wei.server --workcell /workcell_defs/${WORKCELL_FILENAME} --use_diaspora ${USE_DIASPORA}
+    env_file:
+      - .env
     depends_on:
-      - redis
+      - wei_redis
   wei_engine:
-    image: ${APP_NAME} # This should be based on ghcr.io/ad-sdl/wei
+    image: ghcr.io/ad-sdl/wei
     container_name: wei_engine
     volumes:
       - ${WORKCELLS_DIR}:/workcell_defs
-      - ${WEI_DATA_DIR}:/home/wei/.wei
+      - ${WEI_DATA_DIR}:/home/app/.wei
+    env_file:
+      - .env
     command: python3 -m wei.engine --workcell /workcell_defs/${WORKCELL_FILENAME} --use_diaspora ${USE_DIASPORA}
     depends_on:
-      - redis
+      - wei_redis
       - wei_server
       - sleep_node
       - webcam_node
-  redis:
+  wei_redis:
     image: redis
-    container_name: redis
+    container_name: wei_redis
     ports:
       - 6379:6379
     volumes:

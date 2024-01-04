@@ -1,21 +1,8 @@
-FROM ghcr.io/ad-sdl/wei
+FROM ghcr.io/ad-sdl/wei:dev
 
-# Set up user permissions for mounting volumes with the same user as the host
-# This prevents a lot of permission issues
-# Note: if you're not using the makefile/compose.yaml, you'll need to pass these args in yourself
-ARG USER_ID=1000
-ARG GROUP_ID=1000
-ARG CONTAINER_USER=wei
-ARG CONTAINER_USER_ID=1000
-ARG CONTAINER_GROUP_ID=1000
-USER root
-RUN userdel -f ${CONTAINER_USER} &&\
-    if getent group ${CONTAINER_USER}; then groupdel ${CONTAINER_USER}; fi &&\
-    groupadd -g ${GROUP_ID} ${CONTAINER_USER} &&\
-    useradd -l -u ${USER_ID} -g ${CONTAINER_USER} ${CONTAINER_USER} &&\
-    chown --changes --silent --no-dereference --recursive \
-        --from=${CONTAINER_USER_ID}:${CONTAINER_GROUP_ID} ${USER_ID}:${GROUP_ID} \
-        /home/$CONTAINER_USER
+ARG USER_ID=9999
+ARG GROUP_ID=9999
+ARG CONTAINER_USER=app
 USER ${CONTAINER_USER}
 WORKDIR /home/${CONTAINER_USER}
 
@@ -25,4 +12,8 @@ WORKDIR /home/${CONTAINER_USER}
 
 COPY --chown=${USER_ID}:${GROUP_ID} ./example_app example_app
 
-RUN pip install -e example_app
+RUN --mount=type=cache,target=/home/${CONTAINER_USER}/.cache,uid=${USER_ID},gid=${GROUP_ID} \
+    pip install -e example_app
+
+######################################
+USER root
