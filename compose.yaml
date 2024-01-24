@@ -10,6 +10,7 @@ services:
       dockerfile: ${DOCKERFILE}
     volumes:
       - ./example_app:/home/app/example_app # Mount your app code, so you can edit it without rebuilding the image
+      - ${WEI_DATA_DIR}:/home/app/.wei # Mount the wei data directory
       - diaspora_config:/home/app/.diaspora
     env_file:
       - .env
@@ -29,7 +30,7 @@ services:
     image: ghcr.io/ad-sdl/webcam_module
     container_name: webcam_node
     privileged: true # needed for hardware access
-    volumes:
+    devices:
       - /dev/video0:/dev/video0
     ports:
       - 2001:2001

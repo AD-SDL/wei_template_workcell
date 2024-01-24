@@ -23,14 +23,17 @@ def main() -> None:
     exp = ExperimentClient("wei_server", "8000", "Example_Program")
 
     # This runs the workflow
-    flow_info = exp.start_run(wf_path.resolve(), payload=payload, simulate=SIMULATE, blocking=True)
+    flow_info = exp.start_run(
+        wf_path.resolve(), payload=payload, simulate=SIMULATE, blocking=True
+    )
     print(json.dumps(flow_info, indent=2))
 
     # If the workflow run isn't simulated,
     # the below line can be used to fetch the result and save it in our local directory
     if not SIMULATE:
         exp.get_file(
-            flow_info["hist"]["Take Picture"]["action_msg"], "experiment_output.jpg"
+            flow_info["hist"]["Take Picture"]["action_msg"],
+            "/home/app/.wei/experiment_output.jpg",
         )
 
 
