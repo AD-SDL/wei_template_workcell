@@ -6,7 +6,7 @@ services:
   example_app:
     container_name: ${APP_NAME}
     build:
-      context: .
+      context: ./example_app
       dockerfile: ${DOCKERFILE}
     volumes:
       - ./example_app:/home/app/example_app # Mount your app code, so you can edit it without rebuilding the image
@@ -33,7 +33,7 @@ services:
       - /dev/video0:/dev/video0
     ports:
       - 2001:2001
-    command: python /webcam_module/src/webcam_rest_node.py --port 2001
+    command: python webcam_module/src/webcam_rest_node.py --port 2001
     env_file:
       - .env
 
@@ -63,6 +63,8 @@ services:
     env_file:
       - .env
     command: python3 -m wei.engine --workcell /workcell_defs/${WORKCELL_FILENAME} --use_diaspora ${USE_DIASPORA}
+    environment:
+     - PYTHONUNBUFFERED=1 # Fix weird bug with empty logging
     depends_on:
       - wei_redis
       - wei_server

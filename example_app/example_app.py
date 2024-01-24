@@ -6,19 +6,24 @@ from pathlib import Path
 
 from wei import ExperimentClient
 
-SIMULATE = True
+SIMULATE = False
 
 
 def main() -> None:
     """Runs an example WEI workflow"""
     # The path to the Workflow definition yaml file
     wf_path = Path(__file__).parent / "workflows" / "example_workflow.yaml"
+    # payload = {
+    #     "wait_time": 5,
+    #     "file_name": "experiment_output.jpg",
+    # }
+    payload = {}
 
     # This defines the Experiment object that will communicate with the WEI server
     exp = ExperimentClient("wei_server", "8000", "Example_Program")
 
     # This runs the workflow
-    flow_info = exp.start_run(wf_path.resolve(), simulate=SIMULATE, blocking=True)
+    flow_info = exp.start_run(wf_path.resolve(), payload=payload, simulate=SIMULATE, blocking=True)
     print(json.dumps(flow_info, indent=2))
 
     # If the workflow run isn't simulated,
