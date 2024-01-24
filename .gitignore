@@ -161,6 +161,7 @@ cython_debug/
 
 # Local Environment
 .env
+*.code-workspace
 
 # Data Directory
 .wei
