@@ -14,7 +14,7 @@ services:
       - diaspora_config:/home/app/.diaspora
     env_file:
       - .env
-    tty: true
+    profiles: [example_app]
 
   ###########
   # Modules #

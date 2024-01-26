@@ -5,10 +5,10 @@
 run: # Runs APP_COMMAND in a container named APP_NAME
 # The line below ensures that if we're using diaspora, we register it before running
 run: $(if $(findstring $(USE_DIASPORA),true), register_diaspora)
-	docker compose -f $(COMPOSE_FILE) exec -u app $(APP_NAME) $(APP_COMMAND) $(args)
+	docker compose -f $(COMPOSE_FILE) run $(APP_NAME) $(APP_COMMAND) $(args)
 
 exec: init # Opens a shell in the APP_NAME container
-	docker compose -f $(COMPOSE_FILE) exec -u app $(APP_NAME) /bin/bash $(args)
+	docker compose -f $(COMPOSE_FILE) exec $(APP_NAME) /bin/bash $(args)
 
 build: init # Builds the docker image for APP_NAME
 	docker compose -f $(COMPOSE_FILE) build $(args)
