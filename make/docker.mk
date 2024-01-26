@@ -11,7 +11,7 @@ exec: init # Opens a shell in the APP_NAME container
 	docker compose -f $(COMPOSE_FILE) exec $(APP_NAME) /bin/bash $(args)
 
 build: init # Builds the docker image for APP_NAME
-	docker compose -f $(COMPOSE_FILE) build $(args)
+	docker compose -f $(COMPOSE_FILE) --profile example_app build $(args)
 
 start: init # Starts all the docker containers and detaches, allowing you to run other commands
 start: $(if $(findstring $(USE_DIASPORA),true), register_diaspora)
