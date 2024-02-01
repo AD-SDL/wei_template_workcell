@@ -25,8 +25,7 @@ def main() -> None:
     )
     print(json.dumps(flow_info, indent=2))
 
-    # If the workflow run isn't simulated,
-    # the below line can be used to fetch the result and save it in our local directory
+    # The below line can be used to fetch the result and save it in our local directory
     exp.get_file(
         flow_info["hist"]["Take Picture"]["action_msg"],
         "/home/app/.wei/experiment_output.jpg",
