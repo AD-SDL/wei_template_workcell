@@ -12,6 +12,7 @@ services:
       - ./example_app:/home/app/example_app # Mount your app code, so you can edit it without rebuilding the image
       - ${WEI_DATA_DIR}:/home/app/.wei # Mount the wei data directory
       - diaspora_config:/home/app/.diaspora
+    command: python example_app/example_app.py
     env_file:
       - .env
     profiles: [example_app]
