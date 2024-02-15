@@ -21,15 +21,7 @@ As much as possible, this workcell is designed to be configured declaratively. T
 
 ## Building, Running, and Managing your Workcell and Experiment Application
 
-Here are some common commands you can use to manage this workcell:
 
-- `make build`: build the workcell, incorporating any changes as needed
-- `make start`: start just the containers, but don't run the experiment application
-- `make run`: run your experiment application (run `make start` first)
-- `make exec`: opens a terminal inside your application container
-- `make stop`: stops the workcell and any currently running applications
-
-For a complete list of supported commands, you can run `make` or `make help`.
 
 ## Using Diaspora
 
