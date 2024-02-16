@@ -12,6 +12,7 @@ config:
   redis_port: 6379
   reset_locations: false
   update_interval: 1.0
+  use_diaspora: false
   log_level: 20 # INFO level, see https://docs.python.org/3/library/logging.html#levels for a list of levels
 
 #List of all components accessible in this workcell

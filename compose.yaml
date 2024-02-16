@@ -1,4 +1,5 @@
 name: example_workcell
+include: ['wei.compose.yaml']
 services:
   ###########
   # Modules #
@@ -21,52 +22,3 @@ services:
     command: python webcam_module/src/webcam_rest_node.py --port 2001
     env_file:
       - .env
-
-  #####################
-  # WEI Core Services #
-  #####################
-  wei_server:
-    image: ghcr.io/ad-sdl/wei
-    container_name: wei_server
-    ports:
-      - 8000:8000
-    volumes:
-      - /workcell_defs:/workcell_defs
-      - ~/.wei:/home/app/.wei
-      - diaspora_config:/home/app/.diaspora
-    command: python3 -m wei.server --workcell /workcell_defs/example_workcell.yaml
-    env_file:
-      - .env
-    depends_on:
-      - wei_redis
-
-  wei_engine:
-    image: ghcr.io/ad-sdl/wei
-    container_name: wei_engine
-    volumes:
-      - /workcell_defs:/workcell_defs
-      - ~/.wei:/home/app/.wei
-    env_file:
-      - .env
-    command: python3 -m wei.engine --workcell /workcell_defs/example_workcell.yaml
-    environment:
-      - PYTHONUNBUFFERED=1 # Fix weird bug with empty logging
-    depends_on:
-      - wei_redis
-      - wei_server
-
-  wei_redis:
-    image: redis
-    container_name: wei_redis
-    ports:
-      - 6379:6379
-    volumes:
-      - /data:/data
-    command: redis-server --save 60 1 --loglevel warning
-
-################
-# Data Storage #
-################
-volumes:
-  diaspora_config:
-    driver: local
