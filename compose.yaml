@@ -1,22 +1,6 @@
 name: example_workcell
+include: ['wei.compose.yaml']
 services:
-  ############
-  # Your app #
-  ############
-  example_app:
-    container_name: ${APP_NAME}
-    build:
-      context: ./example_app
-      dockerfile: ${DOCKERFILE}
-    volumes:
-      - ./example_app:/home/app/example_app # Mount your app code, so you can edit it without rebuilding the image
-      - ${WEI_DATA_DIR}:/home/app/.wei # Mount the wei data directory
-      - diaspora_config:/home/app/.diaspora
-    command: python example_app/example_app.py
-    env_file:
-      - .env
-    profiles: [example_app]
-
   ###########
   # Modules #
   ###########
@@ -38,52 +22,3 @@ services:
     command: python webcam_module/src/webcam_rest_node.py --port 2001
     env_file:
       - .env
-
-  #####################
-  # WEI Core Services #
-  #####################
-  wei_server:
-    image: ghcr.io/ad-sdl/wei
-    container_name: wei_server
-    ports:
-      - 8000:8000
-    volumes:
-      - ${WORKCELLS_DIR}:/workcell_defs
-      - ${WEI_DATA_DIR}:/home/app/.wei
-      - diaspora_config:/home/app/.diaspora
-    command: python3 -m wei.server --workcell /workcell_defs/${WORKCELL_FILENAME} --use_diaspora ${USE_DIASPORA}
-    env_file:
-      - .env
-    depends_on:
-      - wei_redis
-  wei_engine:
-    image: ghcr.io/ad-sdl/wei
-    container_name: wei_engine
-    volumes:
-      - ${WORKCELLS_DIR}:/workcell_defs
-      - ${WEI_DATA_DIR}:/home/app/.wei
-    env_file:
-      - .env
-    command: python3 -m wei.engine --workcell /workcell_defs/${WORKCELL_FILENAME} --use_diaspora ${USE_DIASPORA}
-    environment:
-     - PYTHONUNBUFFERED=1 # Fix weird bug with empty logging
-    depends_on:
-      - wei_redis
-      - wei_server
-      - sleep_node
-      - webcam_node
-  wei_redis:
-    image: redis
-    container_name: wei_redis
-    ports:
-      - 6379:6379
-    volumes:
-      - ${REDIS_DIR}:/data
-    command: redis-server --save 60 1 --loglevel warning
-
-################
-# Data Storage #
-################
-volumes:
-  diaspora_config:
-    driver: local
