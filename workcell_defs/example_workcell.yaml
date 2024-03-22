@@ -3,7 +3,6 @@ name: Example_Workcell
 # Configuration info and parameters for the workcell and WEI
 # All of these values can be overridden via CLI arguments
 config:
-  workcell_origin_coordinates: [0, 0, 0, 0, 0, 0]
   # This is the name of the container running the WEI server,
   # or the hostname/IP of the machine running the WEI server if not using Docker (or addressing from another machine)
   server_host: wei_server
@@ -22,15 +21,11 @@ modules:
     interface: wei_rest_node
     config:
       rest_node_address: "http://sleep_node:2000"
-      rest_node_auth: ""
-    workcell_coordinates: [0, 0, 0, 0, 0, 0]
   - name: webcam
     model: camera_test_node
     interface: wei_rest_node
     config:
-      rest_node_address: "http://webcam_node:2001"
-      rest_node_auth: ""
-    workcell_coordinates: [10, 0, 0, 0, 0, 0]
+      rest_node_address: "http://camera_node:2001"
 
 locations:
   webcam:
