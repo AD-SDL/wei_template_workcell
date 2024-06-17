@@ -8,7 +8,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ${WORKCELLS_DIR}:/workcell_defs
+      - ./workcell_defs:/workcell_defs
       - ${WEI_DATA_DIR}:/home/app/.wei
     command: python3 -m wei.server --workcell /workcell_defs/${WORKCELL_FILENAME}
     env_file:
@@ -20,7 +20,7 @@ services:
     image: ghcr.io/ad-sdl/wei
     container_name: wei_engine
     volumes:
-      - ${WORKCELLS_DIR}:/workcell_defs
+      - ./workcell_defs:/workcell_defs
       - ${WEI_DATA_DIR}:/home/app/.wei
     env_file:
       - .env
