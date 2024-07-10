@@ -19,8 +19,6 @@ services:
     image: ghcr.io/ad-sdl/camera_module
     container_name: camera_node
     privileged: true # needed for hardware access
-    devices:
-      - /dev/video0:/dev/video0
     ports:
       - 2001:2001
     command: python -m camera_rest_node --port 2001
