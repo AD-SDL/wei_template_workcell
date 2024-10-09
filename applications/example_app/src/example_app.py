@@ -1,36 +1,49 @@
 #!/usr/bin/env python3
 """Example experiment application that uses the WEI client to run a workflow."""
 
-import json
 from pathlib import Path
 
 from wei import ExperimentClient
+from wei.types.experiment_types import CampaignDesign, ExperimentDesign
 
 
 def main() -> None:
     """Runs an example WEI workflow"""
-    # This defines the Experiment object that will communicate with the WEI server
-    exp = ExperimentClient("localhost", "8000", "Example_Program")
-
-    # The path to the Workflow definition yaml file
-    wf_path = Path(__file__).parent.parent / "workflows" / "example_workflow.yaml"
-
-    # This runs the workflow
-    run_info = exp.start_run(
-        wf_path.resolve(),
-        payload={
-            "wait_time": 5,
-            "file_name": "experiment_output.jpg",
-        },
+    # *This defines the ExperimentDesign object that will be used to register the experiment
+    experiment_design = ExperimentDesign(
+        experiment_name="Example_Experiment",
+        experiment_description="This is an example experiment",
     )
-    print(json.dumps(run_info, indent=2))
-
-    # The below line can be used to fetch the result and save it in our local directory
-    exp.get_wf_result_file(
-        run_id=run_info["run_id"],
-        filename=run_info["hist"]["Take Picture"]["action_msg"],
-        output_filepath="experiment_output.jpg",
+    # *Optionally, you can also define a Campaign object to group multiple experiments together
+    # *This is useful when you want to run multiple experiments together
+    campaign = CampaignDesign(
+        campaign_name="Example_Campaign",
+        campaign_description="This is an example campaign",
     )
+    experiment_client = ExperimentClient(
+        server_host="localhost",
+        server_port="8000",
+        experiment=experiment_design,
+        campaign=campaign,
+    )
+
+    # *The path to the Workflow definition yaml file
+    workflow_dir = (Path(__file__).parent.parent / "workflows").resolve()
+    workflow_path = workflow_dir / "example.workflow.yaml"
+
+    # *This runs the workflow
+    wf_run = experiment_client.start_run(
+        workflow=workflow_path,
+        payload={"wait_time": 5},
+        blocking=True,  # *This will block the execution until the workflow is completed
+    )
+
+    # *You can use the below to get the image returned by the camera module
+    datapoint_id = wf_run.get_datapoint_id_by_label("experiment_result")
+    # experiment_client.get_datapoint_value(datapoint_id) # *This will return the image as a bytes object
+    experiment_client.save_datapoint_value(
+        datapoint_id, "experiment_output.jpg"
+    )  # *This will save the image to a file
 
 
 if __name__ == "__main__":

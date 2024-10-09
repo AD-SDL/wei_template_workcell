@@ -1,0 +1,19 @@
+name: Example_Workflow
+metadata:
+  author: Tobias Ginsburg, Kyle Hippe, Ryan D. Lewis
+  info: Example workflow for WEI
+  version: 0.3
+
+flowdef:
+  - name: Sleep workcell for `payload.wait_time` seconds
+    module: utilities
+    action: delay
+    args:
+      seconds: "payload.wait_time"
+    comment: Delay for `payload.wait_time` seconds before we take a picture
+
+  - name: Take Picture
+    module: webcam
+    action: take_picture
+    data_labels:
+      image: experiment_result
