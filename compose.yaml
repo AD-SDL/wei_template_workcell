@@ -1,20 +1,8 @@
 name: example_workcell
-include:
-  - path: 'docker/wei.compose.yaml'
-    project_directory: '.'
-    env_file: '.env'
 services:
   ###########
   # Modules #
   ###########
-  sleep_node:
-    image: ghcr.io/ad-sdl/sleep_module
-    container_name: sleep_node
-    command: python -m sleep_rest_node --port 2000
-    ports:
-      - 2000:2000
-    env_file:
-      - .env
   camera_node:
     image: ghcr.io/ad-sdl/camera_module
     container_name: camera_node
@@ -24,3 +12,39 @@ services:
     command: python -m camera_rest_node --port 2001
     env_file:
       - .env
+
+  #####################
+  # WEI Core Services #
+  #####################
+  wei_server:
+    image: ghcr.io/ad-sdl/wei
+    container_name: wei_server
+    ports:
+      - 8000:8000
+    volumes:
+      - ./workcells:/workcells
+      - ${WEI_DATA_DIR}:/home/app/.wei
+    environment:
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
+    command: python3 -m wei.server --workcell /workcells/${WORKCELL_FILENAME}
+    depends_on:
+      - wei_redis
+
+  utilities:
+    image: ghcr.io/ad-sdl/wei
+    container_name: utilities
+    ports:
+      - 8001:8001
+    command: 'python3 -m wei.modules.utility_module
+      --port 8001
+      --alias utilities'
+
+  wei_redis:
+    image: redis
+    container_name: wei_redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ${REDIS_DIR}:/data
+    command: redis-server --save 60 1 --loglevel warning

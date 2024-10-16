@@ -11,5 +11,8 @@ checks: # Runs all the pre-commit checks
 	@pre-commit install
 	@pre-commit run --all-files || { echo "Checking fixes\n" ; pre-commit run --all-files; }
 
+up: # Starts the workcell
+	@docker compose up --remove-orphans
+
 clean:
 	@rm .env

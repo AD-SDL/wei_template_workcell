@@ -13,17 +13,16 @@ config:
   update_interval: 1.0
   use_diaspora: false
   log_level: 20 # INFO level, see https://docs.python.org/3/library/logging.html#levels for a list of levels
+  autostart_engine: true
 
 #List of all components accessible in this workcell
 modules:
-  - name: sleeper
-    model: sleeper_test_node
-    interface: wei_rest_node
+  - name: utilities
+    model: WEI Utilities module
     config:
-      rest_node_address: "http://sleep_node:2000"
+      rest_node_address: "http://utilities:8001"
   - name: webcam
     model: camera_test_node
-    interface: wei_rest_node
     config:
       rest_node_address: "http://camera_node:2001"
 

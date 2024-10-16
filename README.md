@@ -16,7 +16,7 @@ As much as possible, this workcell is designed to be configured declaratively. T
     - After creating the `.env`, check to make sure the values are complete and correct.
 - The `compose.yaml` docker compose file, which defines a "stack" of containers that control your workcell
     - Note: whenever you see `${SOME_VARIABLE_NAME}` in the compose file, this value is being taken from the `.env`
-- The Workcell Config in `workcell_defs/example_workcell.yaml`, which allows you to define WEI specific configuration for your workcell
+- The Workcell Config in `workcells/example.workcell.yaml`, which allows you to define WEI specific configuration for your workcell
 
 ## Building, Running, and Managing your Workcell
 
